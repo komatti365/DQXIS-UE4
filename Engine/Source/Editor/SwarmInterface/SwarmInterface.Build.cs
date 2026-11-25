@@ -1,4 +1,4 @@
-// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
+﻿// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
 
@@ -6,6 +6,7 @@ public class SwarmInterface : ModuleRules
 {
 	public SwarmInterface(ReadOnlyTargetRules Target) : base(Target)
 	{
+		PublicSystemIncludePaths.Add(@"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\Include\um");
 		PublicIncludePaths.AddRange(
 			new string[] {
 				"Editor/SwarmInterface/Public"
@@ -28,3 +29,6 @@ public class SwarmInterface : ModuleRules
 		}
 	}
 }
+
+
+

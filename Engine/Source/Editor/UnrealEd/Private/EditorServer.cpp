@@ -1396,7 +1396,7 @@ FText UEditorEngine::GetTransactionName() const
 
 bool UEditorEngine::IsObjectInTransactionBuffer( const UObject* Object ) const
 {
-	return Trans->IsObjectInTransationBuffer(Object);
+	return Trans ? Trans->IsObjectInTransationBuffer(Object) : false;
 }
 
 bool UEditorEngine::Map_Select( UWorld* InWorld, const TCHAR* Str, FOutputDevice& Ar)

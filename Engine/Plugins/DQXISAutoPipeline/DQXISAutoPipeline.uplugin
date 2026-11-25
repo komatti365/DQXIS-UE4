@@ -1,0 +1,18 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "DQXIS Auto Pipeline",
+	"Description": "Headless UE4.18 FBX auto-importer for DQXIS MMD Mod Studio",
+	"Category": "Modding",
+	"CreatedBy": "DQXIS MMD Mod Studio",
+	"EnabledByDefault": true,
+	"CanContainContent": false,
+	"Modules": [
+		{
+			"Name": "DQXISAutoPipeline",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}

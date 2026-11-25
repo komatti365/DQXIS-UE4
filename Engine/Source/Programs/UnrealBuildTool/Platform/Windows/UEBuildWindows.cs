@@ -1,4 +1,4 @@
-﻿// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
+// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 using System;
 using System.Collections.Generic;
@@ -278,7 +278,7 @@ namespace UnrealBuildTool
 		/// compiler or later, and the Windows 10 SDK must be installed.  The application will require at least Windows 8.x to run.
 		/// @todo UWP: Expose this to be enabled more easily for building Windows 10 desktop apps
 		/// </summary>
-		public static readonly bool bUseWindowsSDK10 = false;
+		public static readonly bool bUseWindowsSDK10 = true;
 
 		/// <summary>
 		/// True if we allow using addresses larger than 2GB on 32 bit builds
@@ -465,7 +465,20 @@ namespace UnrealBuildTool
 				case WindowsCompiler.VisualStudio2015:
 					return TryReadInstallDirRegistryKey32("Microsoft\\VisualStudio\\SxS\\VS7", "14.0", out InstallDir);
 				case WindowsCompiler.VisualStudio2017:
-					return TryReadInstallDirRegistryKey32("Microsoft\\VisualStudio\\SxS\\VS7", "15.0", out InstallDir);
+					if (TryReadInstallDirRegistryKey32("Microsoft\\VisualStudio\\SxS\\VS7", "15.0", out InstallDir))
+					{
+						return true;
+					}
+					foreach (string Edition in new[] { "Enterprise", "Professional", "Community", "BuildTools" })
+					{
+						DirectoryReference Candidate = new DirectoryReference(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Microsoft Visual Studio", "2017", Edition));
+						if (FileReference.Exists(FileReference.Combine(Candidate, "VC", "Auxiliary", "Build", "Microsoft.VCToolsVersion.default.txt")))
+						{
+							InstallDir = Candidate;
+							return true;
+						}
+					}
+					return false;
 				default:
 					throw new BuildException("Invalid compiler version ({0})", Compiler);
 			}

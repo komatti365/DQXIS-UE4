@@ -270,7 +270,8 @@ namespace UnrealBuildTool
 					throw new BuildException("Couldn't find Windows 10 SDK include directory ({0})", IncludeDir.FullName);
 				}
 
-				DirectoryInfo LatestIncludeDir = IncludeDir.EnumerateDirectories().OrderBy(x => x.Name).LastOrDefault();
+				// Prefer oldest installed Windows 10 SDK (e.g. 10.0.19041.0) for best compatibility with VS 2017 (MSVC 14.16)
+				DirectoryInfo LatestIncludeDir = IncludeDir.EnumerateDirectories().Where(x => x.Name.StartsWith("10.0.")).OrderBy(x => x.Name).FirstOrDefault();
 				if (LatestIncludeDir == null)
 				{
 					throw new BuildException("No Windows 10 SDK versions found under ({0})", IncludeDir.FullName);
@@ -292,7 +293,7 @@ namespace UnrealBuildTool
 			{
 				case WindowsCompiler.VisualStudio2017:
 				case WindowsCompiler.VisualStudio2015:
-					Versions = new string[] { "4.6", "4.6.1", "4.6.2" };
+					Versions = new string[] { "4.6", "4.6.1", "4.6.2", "4.7.2", "4.8" };
 					break;
 
 				default:
@@ -596,28 +597,19 @@ namespace UnrealBuildTool
 		/// </summary>
 		string GetResourceCompilerToolPath(CppPlatform Platform)
 		{
-			// 64 bit -- we can use the 32 bit version to target 64 bit on 32 bit OS.
-			if (Platform == CppPlatform.Win64)
+			string Arch = (Platform == CppPlatform.Win64) ? "x64" : "x86";
+			if (WindowsPlatform.bUseWindowsSDK10)
 			{
-				if (WindowsPlatform.bUseWindowsSDK10)
+				string VersionedRc = Path.Combine(WindowsSDKDir, "bin", WindowsSDKLibVersion, Arch, "rc.exe");
+				if (File.Exists(VersionedRc))
 				{
-					return Path.Combine(WindowsSDKExtensionDir, "bin/x64/rc.exe");
+					return VersionedRc;
 				}
-				else
-				{
-					return Path.Combine(WindowsSDKDir, "bin/x64/rc.exe");
-				}
+				return Path.Combine(WindowsSDKExtensionDir, "bin", Arch, "rc.exe");
 			}
 			else
 			{
-				if (WindowsPlatform.bUseWindowsSDK10)
-				{
-					return Path.Combine(WindowsSDKExtensionDir, "bin/x86/rc.exe");
-				}
-				else
-				{
-					return Path.Combine(WindowsSDKDir, "bin/x86/rc.exe");
-				}
+				return Path.Combine(WindowsSDKDir, "bin", Arch, "rc.exe");
 			}
 		}
 

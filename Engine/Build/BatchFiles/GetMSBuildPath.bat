@@ -13,6 +13,16 @@ rem ## Check for MSBuild 15. This is installed alongside Visual Studio 2017, so 
 call :ReadInstallPath Microsoft\VisualStudio\SxS\VS7 15.0 MSBuild\15.0\bin\MSBuild.exe
 if not errorlevel 1 goto Succeeded
 
+if exist "%ProgramFiles%\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe" (
+	set MSBUILD_EXE="%ProgramFiles%\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe"
+	goto Succeeded
+)
+
+if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\MSBuild.exe" (
+	set MSBUILD_EXE="%ProgramFiles(x86)%\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\MSBuild.exe"
+	goto Succeeded
+)
+
 rem ## Try to get the MSBuild 14.0 path directly (see https://msdn.microsoft.com/en-us/library/hh162058(v=vs.120).aspx)
 
 if exist "%ProgramFiles(x86)%\MSBuild\14.0\bin\MSBuild.exe" (
